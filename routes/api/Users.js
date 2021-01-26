@@ -24,12 +24,22 @@ router.get("/:id", (req, res) => {
   users.findOne({ _id: req.params.id }).then((user) => res.json(user));
 });
 
+router.put("/:id", async (req, res) => {
+  console.log(req.body);
+  users.findByIdAndUpdate(req.params.id, req.body, function (err, result) {
+    if (err) {
+      res.send(err);
+    } else {
+      res.send(result);
+    }
+  });
+});
+
 //@ POST request to api/Users
 //@ desc POST User
 //@ access Public
 
 router.post("/", (req, res) => {
-  // res.send("register")
   const {
     UserName,
     FirstName,
@@ -54,7 +64,41 @@ router.post("/", (req, res) => {
     if (user) {
       return res.status(400).json({ msg: "User already exists" });
     }
+    const validateUserSignup = [
+      body("email").isEmail(),
+      body("firstName").exists(),
+      body("firstName").isLength({ min: 1 }),
+      body("lastName").exists(),
+      body("lastName").isLength({ min: 1 }),
+      body("userName").exists(),
+      body("userName").isLength({ min: 4 }),
+      body("password1").isLength({ min: 8 }),
+      body("password1").exists(),
+      body("password2").custom((value, { req }) => {
+        if (value !== req.body.password1) {
+          throw new Error("Password confirmation does not match password");
+        }
+        return true;
+      }),
+    ];
 
+    const handleValidationErrors = (req, res, next) => {
+      const errors = validationResult(req);
+      if (errors.isEmpty()) {
+        next();
+      } else {
+        let message = "";
+        for (let k = 0; k < errors.array().length; k++) {
+          message =
+            message +
+            errors.array()[k].msg +
+            " for " +
+            errors.array()[k].param +
+            ". ";
+        }
+        res.json({ loggedIn: false, message: message });
+      }
+    };
     const newUser = new users({
       UserName,
       FirstName,
