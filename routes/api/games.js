@@ -19,10 +19,13 @@ router.get("/", (req, res) => {
 //@ desc Get all pets
 //@ access Private
 router.post("/", (req, res, next) => {
-  console.log(typeof req.body.Colors);
+  console.log(typeof req.body. level1_Colors);
   //req.body.values = JSON.parse(req.body);
   let NewGame = new games({
-    Colors: req.body.Colors,
+    level1_Colors: req.body.level1_Colors,
+    level2_Colors: req.body.level2_Colors,
+    level3_Colors: req.body.level3_Colors,
+    level4_Colors: req.body.level4_Colors
   });
   NewGame.save();
 });

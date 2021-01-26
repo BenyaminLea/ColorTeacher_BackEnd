@@ -3,7 +3,22 @@ const mongoose = require("mongoose");
 Schema = mongoose.Schema;
 
 const GameSchema = new Schema({
-  Colors: [
+  level1_Colors: [
+    {
+      type: String,
+    },
+  ],
+  level2_Colors: [
+    {
+      type: String,
+    },
+  ],
+  level3_Colors: [
+    {
+      type: String,
+    },
+  ],
+  level4_Colors: [
     {
       type: String,
     },
